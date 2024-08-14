@@ -6,9 +6,9 @@
         class="w-100 border border-1 shadow p-3 bg-body-tertiary rounded flex-grow-1 flex-shrink-1"
       >
         <div class="position-relative mb-5">
-          <p class="position-absolute start-50 h4">公告</p>
+          <p class="position-absolute start-50 h4"><BLink to="/detail/1">公告</BLink></p>
           <RouterLink
-            to="/edit"
+            to="/edit/1"
             class="position-absolute end-0 fw-lighter text-black-50"
             style="text-decoration: none"
             >编辑</RouterLink
