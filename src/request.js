@@ -4,7 +4,7 @@ import axios from "axios";
 
 const http = axios.create({
   baseURL: "https://localhost:7216",
-  timeout: 5000,
+  timeout: 50000,
 });
 
 //请求拦截
@@ -12,6 +12,7 @@ http.interceptors.request.use(
   (config) => {
     // 可以在这里添加请求头等信息
     // 例如：config.headers['Authorization'] = 'Bearer your-token';
+    config.headers["Content-Type"] = "application/json";
     return config;
   },
   (error) => {

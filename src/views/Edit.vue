@@ -1,35 +1,64 @@
 <template>
-  <MdEditor v-model="state.text" 
-  :disabled="state.disabled"
-  :theme="state.theme" @onUploadImg="onUploadImg" @onSave="onSave" 
-  class="edit"
-  ref="editor"
+  <MdEditor
+    v-model="articleEntity.wActContent"
+    :disabled="state.disabled"
+    :theme="state.theme"
+    @onUploadImg="onUploadImg"
+    @onSave="onSave"
+    class="edit"
+    ref="editor"
   />
   <BToastOrchestrator />
 </template>
 <script setup>
-import { reactive ,ref } from "vue";
-import { useRoute } from 'vue-router'
+import { reactive, ref, onMounted, toRaw } from "vue";
+import { useRoute } from "vue-router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import http from "../request";
-import { useToast } from 'bootstrap-vue-next';
+import { useToast } from "bootstrap-vue-next";
 const state = reactive({
   text: "# div1",
   theme: "github",
   disabled: false,
-  catalog:true,
-  title:'新增文档'
+  catalog: true,
+  title: "新增文档",
+});
+const articleEntity = reactive({
+  wActId: "",
+  wActTitle: "",
+  wActContent: "",
+  wAcrDesc: "",
 });
 const editor = ref();
 
-const route = useRoute()
-
-let saveTips = { title: '保存中...', value: true, variant: 'success', pos: 'top-center' }
-let saveTipsObj;
-
+const route = useRoute();
 //提示
 const { show, remove } = useToast();
+
+let saveTips = {
+  title: "保存中...",
+  value: true,
+  variant: "success",
+  pos: "top-center",
+};
+let saveTipsObj;
+
+onMounted(() => {
+  var artcleId = route.params.id;
+  loadingData(artcleId);
+});
+
+const loadingData = (artId = "0") => {
+  if (artId) {
+    http.get(`article/one?id=${artId}`).then((res) => {
+      articleEntity.wActId = res.wActId;
+      articleEntity.wActTitle = res.wActTitle;
+      articleEntity.wActContent = res.wActContent;
+      articleEntity.wAcrDesc = res.wAcrDesc;
+    });
+  }
+};
 
 //文件上传配置
 const onUploadImg = async (files, callback) => {
@@ -66,34 +95,30 @@ const onUploadImg = async (files, callback) => {
 
 //文档保存
 const onSave = (valueHtml, previewHtml) => {
-  state.text = valueHtml;
+  articleEntity.wActContent = valueHtml;
   state.disabled = true;
   saveTipsObj = show({
-    props: saveTips
-  })
-  
-  setTimeout(() => {
-    remove(saveTipsObj)
-    state.disabled = false;
-    saveTipsObj = null;
-  }, 2000);
-}
-
-const init = () =>{
-  var artcleId = route.params.id;
-  if(artcleId){
-    state.title = '编辑'
-  }
-  document.title = state.title
-}
-
-init()
-
-
+    props: saveTips,
+  });
+  var data = toRaw(articleEntity);
+  http
+    .post("article/addOrUpdate", data)
+    .then((res) => {
+      articleEntity.wActId = res.wActId;
+      articleEntity.wActTitle = res.wActTitle;
+      articleEntity.wActContent = res.wActContent;
+      articleEntity.wAcrDesc = res.wAcrDesc;
+    })
+    .then(() => {
+      remove(saveTipsObj);
+      state.disabled = false;
+      saveTipsObj = null;
+    });
+};
 </script>
 
 <style>
-  .edit{
-    height: 80vh;
-  }
+.edit {
+  height: 80vh;
+}
 </style>
