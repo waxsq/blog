@@ -1,7 +1,6 @@
 <template>
   <div id="root">
     <Nav></Nav>
-    <!-- <Home></Home> -->
     <RouterView />
   </div>
 </template>

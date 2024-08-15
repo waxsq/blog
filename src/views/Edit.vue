@@ -71,6 +71,7 @@ const onSave = (valueHtml, previewHtml) => {
   saveTipsObj = show({
     props: saveTips
   })
+  
   setTimeout(() => {
     remove(saveTipsObj)
     state.disabled = false;
@@ -79,7 +80,6 @@ const onSave = (valueHtml, previewHtml) => {
 }
 
 const init = () =>{
-  // console.log(route.params.id)
   var artcleId = route.params.id;
   if(artcleId){
     state.title = '编辑'
@@ -90,10 +90,6 @@ const init = () =>{
 init()
 
 
-//显示目录
-// const showCatalog = () =>{
-//   editor.value.toggleCatalog(state.catalog)
-// }
 </script>
 
 <style>
